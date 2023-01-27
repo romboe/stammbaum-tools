@@ -22,6 +22,10 @@ public class Printer {
 	public static void printIndi(Indi indi, StringBuilder sb) {
 		sb.append("0 ").append(printId(indi.getId())).append(" INDI").append(LINE_BREAK);
 		sb.append("1 NAME ").append(indi.getName()).append(LINE_BREAK);
+		sb.append("1 SURN ").append(indi.getSurn()).append(LINE_BREAK);
+		sb.append("1 GIVN ").append(indi.getGivn()).append(LINE_BREAK);
+		sb.append("1 BIRT ").append(LINE_BREAK);
+		sb.append("2 DATE ").append(indi.getBirt()).append(LINE_BREAK);
 		for (String id:indi.getFamc()) {
 			sb.append("1 FAMC ").append(printId(id)).append(LINE_BREAK);
 		}

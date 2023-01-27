@@ -9,7 +9,5 @@ public class Main {
 		Converter converter = new Converter();
 		Gedcom gedcom = converter.convert(parser.getPersons());
 		System.out.println(Printer.print(gedcom));
-
 	}
-
 }

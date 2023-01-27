@@ -3,14 +3,11 @@ package at.romboe.stammbaumtools.parser;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,8 +34,6 @@ public class Parser {
 	public static final String ATTR_WIKI = "wiki";
 	public static final String ATTR_IMG = "img";
 	private static final String UNDEFINED_STR = "undefined";
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-	private static final int UNDEFINED_YEAR_SET = 1500;
 	private String fileName;
 
 	public Parser(String fileName) {
@@ -51,23 +46,19 @@ public class Parser {
 			FileReader reader = new FileReader(this.fileName);
 			GsonBuilder builder = new GsonBuilder();
 			// handles deserialization of Date objects
-			builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
-				public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+			builder.registerTypeAdapter(Optional.class, new JsonDeserializer<Optional<LocalDate>>() {
+				public Optional<LocalDate> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 						throws JsonParseException {
 					String str = json.getAsString();
 					try {
 						if (StringUtils.isNotEmpty(str) && !str.equals(UNDEFINED_STR) && !str.equals("0000-00-00")) {
-							return DATE_FORMAT.parse(str);
+							return Optional.of(LocalDate.parse(str));
 						}
 					}
-					catch(ParseException e) {
+					catch(DateTimeParseException e) {
 						e.printStackTrace();
 					}
-					Calendar c = new GregorianCalendar();
-					c.set(Calendar.YEAR, UNDEFINED_YEAR_SET);
-					c.set(Calendar.MONTH, Calendar.JANUARY);
-					c.set(Calendar.DAY_OF_MONTH, 1);
-					return c.getTime();
+					return Optional.empty();
 				}
 
 			});

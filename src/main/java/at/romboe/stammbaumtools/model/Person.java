@@ -1,6 +1,7 @@
 package at.romboe.stammbaumtools.model;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.Optional;
 
 import lombok.Data;
 
@@ -10,8 +11,8 @@ public class Person {
 	private String uuid;
 	private String firstname;
 	private String lastname;
-	private Date birth;
-	private Date death;
+	private Optional<LocalDate> birth;
+	private Optional<LocalDate> death;
 	private Integer father;
 	private Integer mother;
 	private String wiki;

@@ -1,12 +1,13 @@
 package at.romboe.stammbaumtools.gedcom;
 
+import static at.romboe.stammbaumtools.model.helper.ModelHelper.findPersonById;
+
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
 
 import at.romboe.stammbaumtools.gedcom.model.Fam;
 import at.romboe.stammbaumtools.gedcom.model.Indi;
@@ -14,9 +15,10 @@ import at.romboe.stammbaumtools.gedcom.model.helper.FamFactory;
 import at.romboe.stammbaumtools.gedcom.model.helper.GedcomModelHelper;
 import at.romboe.stammbaumtools.gedcom.model.helper.IndiFactory;
 import at.romboe.stammbaumtools.model.Person;
-import static at.romboe.stammbaumtools.model.helper.ModelHelper.*;
 
 public class Converter {
+
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 	private Map<String,Fam> famMap = new HashMap<>();
 
 
@@ -32,8 +34,8 @@ public class Converter {
 
 	public void createFams(List<Person> persons, List<Indi> indis) {
 		for (Person p:persons) {
-			Optional<Person> father = findPerson(persons, p.getFather());
-			Optional<Person> mother = findPerson(persons, p.getMother());
+			Optional<Person> father = findPersonById(persons, p.getFather());
+			Optional<Person> mother = findPersonById(persons, p.getMother());
 
 			String famId = buildFamId(father, mother);
 			if (famId.length() > 1) {
@@ -85,6 +87,9 @@ public class Converter {
 	public static Indi toIndi(Person person) {
 		Indi indi = IndiFactory.createIndi(person.getUuid());
 		indi.setName(person.getFirstname() + " " + person.getLastname());
+		indi.setGivn(person.getFirstname());
+		indi.setSurn(person.getLastname());
+		person.getBirth().ifPresent(d -> indi.setBirt(d.format(DATE_FORMATTER)));
 		return indi;
 	}
 }
