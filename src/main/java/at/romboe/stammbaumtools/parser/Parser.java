@@ -18,9 +18,9 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-import at.romboe.stammbaumtools.model.Constants;
 import at.romboe.stammbaumtools.model.Person;
 import at.romboe.stammbaumtools.model.Root;
+import at.romboe.stammbaumtools.model.helper.Constants;
 
 public class Parser {
 
@@ -35,6 +35,7 @@ public class Parser {
 	public static final String ATTR_IMG = "img";
 	private static final String UNDEFINED_STR = "undefined";
 	private String fileName;
+
 
 	public Parser(String fileName) {
 		this.fileName = fileName;

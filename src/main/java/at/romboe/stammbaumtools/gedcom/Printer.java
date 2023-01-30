@@ -2,6 +2,7 @@ package at.romboe.stammbaumtools.gedcom;
 
 import at.romboe.stammbaumtools.gedcom.model.Fam;
 import at.romboe.stammbaumtools.gedcom.model.Indi;
+import at.romboe.stammbaumtools.gedcom.model.helper.Constants;
 
 public class Printer {
 
@@ -20,10 +21,10 @@ public class Printer {
 
 
 	public static void printIndi(Indi indi, StringBuilder sb) {
-		sb.append("0 ").append(printId(indi.getId())).append(" INDI").append(LINE_BREAK);
+		sb.append("0 ").append(printId(indi.getId())).append(" ").append(Constants.INDI).append(LINE_BREAK);
 		sb.append("1 NAME ").append(indi.getName()).append(LINE_BREAK);
-		sb.append("1 SURN ").append(indi.getSurn()).append(LINE_BREAK);
-		sb.append("1 GIVN ").append(indi.getGivn()).append(LINE_BREAK);
+		sb.append("2 SURN ").append(indi.getSurn()).append(LINE_BREAK);
+		sb.append("2 GIVN ").append(indi.getGivn()).append(LINE_BREAK);
 		sb.append("1 BIRT ").append(LINE_BREAK);
 		sb.append("2 DATE ").append(indi.getBirt()).append(LINE_BREAK);
 		for (String id:indi.getFamc()) {

@@ -2,19 +2,25 @@ package at.romboe.stammbaumtools.gedcom;
 
 import static at.romboe.stammbaumtools.model.helper.ModelHelper.findPersonById;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
+
+import org.folg.gedcom.model.GedcomTag;
 
 import at.romboe.stammbaumtools.gedcom.model.Fam;
 import at.romboe.stammbaumtools.gedcom.model.Indi;
+import at.romboe.stammbaumtools.gedcom.model.helper.Constants;
 import at.romboe.stammbaumtools.gedcom.model.helper.FamFactory;
 import at.romboe.stammbaumtools.gedcom.model.helper.GedcomModelHelper;
 import at.romboe.stammbaumtools.gedcom.model.helper.IndiFactory;
 import at.romboe.stammbaumtools.model.Person;
+import at.romboe.stammbaumtools.model.Root;
 
 public class Converter {
 
@@ -22,7 +28,56 @@ public class Converter {
 	private Map<String,Fam> famMap = new HashMap<>();
 
 
-	public Gedcom convert(List<Person> persons) {
+	public Root convertToStammbaumModel(List<GedcomTag> tags) {
+		Root root = new Root();
+		List<Person> persons = new ArrayList<>();
+		root.setPeople(persons);
+		for (GedcomTag t:tags) {
+			if (Constants.INDI.equals(t.getTag())) {
+				Person p = new Person();
+				p.setUuid(t.getId());
+				for (GedcomTag childTag:t.getChildren()) {
+					String name = childTag.getTag();
+					String value = childTag.getValue();
+					if (Constants.NAME.equals(name)) {
+						for (GedcomTag c2:childTag.getChildren()) {
+							if (Constants.GIVN.equals(c2.getTag())) {
+								p.setFirstname(c2.getValue());
+							}
+							else if (Constants.SURN.equals(c2.getTag())) {
+								p.setLastname(c2.getValue());
+							}
+						}
+					}
+					else if (Constants.BIRT.equals(name)) {
+						addDate(childTag, p::setBirth);
+					}
+					else if (Constants.DEAT.equals(name) && null != value) {
+						addDate(childTag, p::setDeath);
+					}
+				}
+				persons.add(p);
+			}
+		}
+
+		return root;
+	}
+
+	private void addDate(GedcomTag tag, Consumer<Optional<LocalDate>> consumer) {
+		for (GedcomTag childTag:tag.getChildren()) {
+			if (Constants.DATE.equals(childTag.getTag())) {
+				try {
+					consumer.accept(Optional.of(LocalDate.parse(childTag.getValue(), DATE_FORMATTER)));
+					break;
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public Gedcom convertToGedcom(List<Person> persons) {
 		List<Indi> indis = toIndis(persons);
 		createFams(persons, indis);
 
