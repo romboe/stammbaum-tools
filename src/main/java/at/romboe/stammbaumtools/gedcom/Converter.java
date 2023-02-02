@@ -144,7 +144,18 @@ public class Converter {
 		indi.setName(person.getFirstname() + " " + person.getLastname());
 		indi.setGivn(person.getFirstname());
 		indi.setSurn(person.getLastname());
-		person.getBirth().ifPresent(d -> indi.setBirt(d.format(DATE_FORMATTER)));
+		person.getBirth().ifPresentOrElse(
+			d -> indi.setBirt(Optional.of(d.format(DATE_FORMATTER))),
+			() -> indi.setBirt(Optional.empty()));
+		person.getDeath().ifPresentOrElse(
+			d -> indi.setDeat(Optional.of(d.format(DATE_FORMATTER))),
+			() -> indi.setDeat(Optional.empty()));
+			
+			/*1 OBJE
+2 FORM jpeg
+2 TITL astrid
+2 FILE /home/roman/Bilder/familytree/astrid/astrid.jpg
+*/
 		return indi;
 	}
 }

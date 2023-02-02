@@ -1,35 +1,31 @@
 package at.romboe.stammbaumtools.gedcom;
 
-import java.io.File;
+import static at.romboe.stammbaumtools.gedcom.Printer.printToFile;
+
 import java.io.IOException;
-import java.util.List;
 
-import org.folg.gedcom.model.GedcomTag;
-import org.folg.gedcom.parser.TreeParser;
-import org.xml.sax.SAXParseException;
-
-import at.romboe.stammbaumtools.model.Root;
+import at.romboe.stammbaumtools.parser.Parser;
 
 public class Main {
 
-	public static void main(String[] args) {
-//		Parser parser = new Parser("data.js");
+	public static void main(String[] args) throws IOException {
+		Parser parser = new Parser("data.js");
 		Converter converter = new Converter();
-//		Gedcom gedcom = converter.convert(parser.getPersons());
-//		System.out.println(Printer.print(gedcom));
+		Gedcom gedcom = converter.convertToGedcom(parser.getPersons());
+		printToFile(gedcom, "output.ged");
 
-		TreeParser treeParser = new TreeParser();
-		try {
-			List<GedcomTag> tags = treeParser.parseGedcom(new File("sample01.ged"));
-			Root root = converter.convertToStammbaumModel(tags);
-			at.romboe.stammbaumtools.Printer.printToConsole(root.getPeople());
-		} catch (SAXParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		TreeParser treeParser = new TreeParser();
+//		try {
+//			List<GedcomTag> tags = treeParser.parseGedcom(new File("sample01.ged"));
+//			Root root = converter.convertToStammbaumModel(tags);
+//			at.romboe.stammbaumtools.Printer.printToConsole(root.getPeople());
+//		} catch (SAXParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 	}
 }
